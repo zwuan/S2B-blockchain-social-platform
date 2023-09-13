@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+    <script>
+$(function(){
+if (window.ethereum) {
+// 有安裝 MetaMask
+} else {
+alert( '沒有安裝 MetaMask' );
+}
+});
+ethereum.request({ method: 'eth_requestAccounts' }).then((result) =>               {
+address = result[0];
+document.getElementById("account").innerHTML = address
+alert('錢包連接成功');
+}).catch((error) => {
+console.log("error",error);
+});
+window.addEventListener("load", function() {
+    // detect Metamask account change
+    window.ethereum.on('accountsChanged', function (accounts) {
+      console.log('accountsChanges',accounts);
+      document.getElementById("account").innerHTML = accounts
+    });
+});
+</script>
+<body>
+    <h2>Web3 API version</h2>
+    <p id="p1"></p>
+    <h2>My Account</h2>
+    <form method="get" id="account"></form>
+  </body>
+</html>

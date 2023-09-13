@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+
+      {% for thread in threads.items %}
+
+        <div class="alert alert-primary" role="alert">
+          {{ thread.wallet }}
+          {{ thread.credit }}
+          {{ thread.swear }}
+          {{ thread.val }}
+          {{ thread.done }}
+          <a href="{{url_for('delete', id=thread.pid, page_num=threads.page)}}" class="btn btn-outline-primary btn-sm">delete</a>
+        </div>
+
+      {% endfor %}
+
+      {% for page in threads.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+
+        {% if page %}
+          <a href="{{ url_for('admin', page_num=page) }}">{{ page }}</a>
+        {% else %}
+          ...
+        {% endif %}
+      {% endfor %}
+</div>
+{% endblock %}

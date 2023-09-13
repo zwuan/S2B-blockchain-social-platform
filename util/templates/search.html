@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{%block scripts%}
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script>
+$(function(){
+if (window.ethereum) {
+// 有安裝 MetaMask
+} else {
+alert( '沒有安裝 MetaMask' );
+}
+});
+const web3 = new Web3(window.ethereum);
+ethereum.request({ method: 'eth_requestAccounts' }).then((result) =>               {
+address = result[0];
+address = web3.utils.toChecksumAddress(address);
+document.getElementById("wallet").value = address;
+alert('錢包連接成功');
+}).catch((error) => {
+console.log("error",error);
+});
+window.addEventListener("load", function() {
+    // detect Metamask account change
+    window.ethereum.on('accountsChanged', function (accounts) {
+      console.log('accountsChanges',accounts);
+      document.getElementById("wallet").value = web3.utils.toChecksumAddress(accounts[0]);
+    });
+});
+</script>
+{%endblock scripts%}
+{% block content %}
+
+<form method="POST">
+{# This hidden_tag is a CSRF security feature. #} 
+{{ form.hidden_tag() }}
+<div class="form-group">
+{{ form.wallet.label }} 
+{{ form.wallet(class_="form-control form-control-lg") }}
+</div>
+<br>
+{{form.submit(class="btn btn-outline-primary btn-sm")}}
+</form>
+{% endblock %}
+

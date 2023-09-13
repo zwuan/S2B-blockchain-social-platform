@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+{%block scripts%}
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script>
+
+if (!ethereum || !ethereum.isMetaMask) {
+  throw new Error('請下載MetaMask');
+}
+const web3 = new Web3(window.ethereum);
+web3.eth.net.getId(function (err, networkId) {
+console.log(networkId)
+});
+web3.eth.net.isListening().then(() => console.log('web3 is connected')).catch(e => console.log('Wow. Something went wrong'));
+
+const abi =[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_spender",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_challenger",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"name": "_complete",
+				"type": "bool"
+			}
+		],
+		"name": "check",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_temp",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "swear",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_spender",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"name": "_extraData",
+				"type": "bytes"
+			}
+		],
+		"name": "approveAndCall",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Swear",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Burn",
+		"type": "event"
+	}
+]
+
+const ConAddr = '0x729B18D6c15AAFA5EF06c23C60D5401C6540B9D0';
+
+var contract = new web3.eth.Contract(abi, ConAddr);
+
+console.log(contract);
+
+</script>
+{%endblock scripts%}
+{% block content %}
+
+    <div class="container">
+
+      {% for thread in threads.items %}
+
+        <div class="alert alert-primary" role="alert">
+          {%if thread.done == 0%}
+          <span style="white-space: nowrap;">發誓人: </span>
+          {{ thread.wallet }}
+          <br>
+          <span style="white-space: nowrap;">保證人: </span>
+          {{ thread.credit }}
+          <br>
+          <span style="white-space: nowrap;">發誓內容: </span>
+          {{ thread.swear }}
+          <br>
+          <span style="white-space: nowrap;">發誓金額: </span>
+          {{ thread.val }}
+          <br>
+          <span style="white-space: nowrap;">發誓時間: </span>
+          {{ thread.date }}
+          <br>
+          <span style="white-space: nowrap;">是否達成: </span>
+          <a id = "ok" href="{{url_for('approve',id=thread.pid, data=data, page_num=threads.page)}}" class="btn btn-outline-primary btn-sm">達成</a>
+          <a id = "nok" href="{{url_for('disapprove',id=thread.pid, data=data, page_num=threads.page)}}" class="btn btn-outline-primary btn-sm">食言</a>
+<script>
+document.getElementById("ok").addEventListener("click", function() {
+console.log("{{thread.val}}"); 
+var money = String(("{{thread.val}}"-1)).concat('000000000000000000');
+console.log(money); 
+   contract.methods.check("{{thread.wallet}}", money, true).send({from:"{{thread.credit}}"});
+});
+document.getElementById("nok").addEventListener("click", function() {
+var money = String(("{{thread.val}}"-1)).concat('000000000000000000');
+    contract.methods.check("{{thread.wallet}}", money, false).send({from:"{{thread.credit}}"});
+});
+</script>
+        {%else%}
+          <span style="white-space: nowrap;">發誓人: </span>
+          {{ thread.wallet }}
+          <br>
+          <span style="white-space: nowrap;">保證人: </span>
+          {{ thread.credit }}
+          <br>
+          <span style="white-space: nowrap;">發誓內容: </span>
+          {{ thread.swear }}
+          <br>
+          <span style="white-space: nowrap;">發誓金額: </span>
+          {{ thread.val }}
+          <br>
+          <span style="white-space: nowrap;">發誓時間: </span>
+          {{ thread.date }}
+          <br>
+          <span style="white-space: nowrap;">是否達成: </span>
+          {%if thread.done == 1%}
+          <span style="white-space: nowrap;color:green">達成 </span>
+          {%else%}
+          <span style="white-space: nowrap;color:red">食言 </span>
+          {%endif%}
+          <br>
+          {%if thread.done == 1%}
+          <span style="white-space: nowrap;">達成時間: </span>
+          {{ thread.time }}
+          {%endif%}
+        {%endif%}
+        </div>
+
+      {% endfor %}
+
+      {% for page in threads.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+
+        {% if page %}
+          <a href="{{ url_for('mycredit', data=data,page_num=page) }}">{{ page }}</a>
+        {% else %}
+          ...
+        {% endif %}
+
+      {% endfor %}
+
+    </div>
+
+{% endblock %}
+

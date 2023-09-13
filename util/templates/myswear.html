@@ -1,0 +1,56 @@
+{%extends "base.html" %}
+{% block content %}
+
+<h1>{{data}}</h1>
+
+    <div class="container">
+
+      {% for thread in threads.items %}
+
+        <div class="alert alert-primary" role="alert">
+          <span style="white-space: nowrap;">發誓人: </span>
+          {{ thread.wallet }}
+          <br>
+          <span style="white-space: nowrap;">保證人: </span>
+          {{ thread.credit }}
+          <br>
+          <span style="white-space: nowrap;">發誓內容: </span>
+          {{ thread.swear }}
+          <br>
+          <span style="white-space: nowrap;">發誓金額: </span>
+          {{ thread.val }}
+          <br>
+          <span style="white-space: nowrap;">發誓時間: </span>
+          {{ thread.date }}
+          <br>
+          <span style="white-space: nowrap;">是否達成: </span>
+          {%if thread.done == 0%}
+          <span style="white-space: nowrap;">未裁決</span>
+          {%elif thread.done == 1%}
+          <span style="white-space: nowrap;color:green">達成 </span>
+          {%else%}
+          <span style="white-space: nowrap;color:red">食言 </span>
+          {%endif%}
+          <br>
+          {%if thread.done == 1%}
+          <span style="white-space: nowrap;">達成時間: </span>
+          {{ thread.time }}
+          {%endif%}
+        </div>
+
+      {% endfor %}
+
+      {% for page in threads.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+
+        {% if page %}
+          <a href="{{ url_for('myswear', data=data, page_num=page) }}">{{ page }}</a>
+        {% else %}
+          ...
+        {% endif %}
+
+      {% endfor %}
+
+    </div>
+
+{% endblock %}
+

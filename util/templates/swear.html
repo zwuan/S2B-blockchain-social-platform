@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+{%block scripts%}
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script>
+
+if (!ethereum || !ethereum.isMetaMask) {
+  throw new Error('請下載MetaMask');
+}
+const web3 = new Web3(window.ethereum);
+web3.eth.net.getId(function (err, networkId) {
+console.log(networkId)
+});
+web3.eth.net.isListening().then(() => console.log('web3 is connected')).catch(e => console.log('Wow. Something went wrong'));
+
+const abi =[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_spender",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_challenger",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"name": "_complete",
+				"type": "bool"
+			}
+		],
+		"name": "check",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_temp",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"name": "swear",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_spender",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"name": "_extraData",
+				"type": "bytes"
+			}
+		],
+		"name": "approveAndCall",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Swear",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Burn",
+		"type": "event"
+	}
+]
+
+const ConAddr = '0x729B18D6c15AAFA5EF06c23C60D5401C6540B9D0';
+
+var contract = new web3.eth.Contract(abi, ConAddr);
+
+console.log(contract);
+
+ethereum.request({ method: 'eth_requestAccounts' }).then((result) =>{
+address = result[0];
+address = web3.utils.toChecksumAddress(address);
+document.getElementById("wallet").value = address;
+alert('錢包連接成功');
+}).catch((error) => {
+console.log("error",error);
+});
+
+window.addEventListener("load", function() {
+    // detect Metamask account change
+    window.ethereum.on('accountsChanged', function (accounts) {
+      console.log('accountsChanges',accounts[0]);
+      document.getElementById("wallet").value = web3.utils.toChecksumAddress(accounts[0]);
+    });
+});
+</script>
+{%endblock scripts%}
+{% block content %}
+
+<form method="POST">
+{# This hidden_tag is a CSRF security feature. #} 
+{{ form.hidden_tag() }}
+<div class="form-group">
+{{ form.wallet.label }} 
+{{ form.wallet(class_="form-control form-control-lg") }}
+</div>
+<div class="form-group">
+{{ form.credit.label }} 
+{{ form.credit(class_="form-control form-control-lg") }}
+</div>
+<div class="form-group">
+{{ form.swear.label }} 
+{{ form.swear(class_="form-control form-control-lg") }}
+</div>
+<div class="form-group">
+{{ form.val.label }} 
+{{ form.val(class_="form-control form-control-lg") }}
+</div>
+<br>
+<button id="submit" type="submit" style="background: none;" name="submit" value="x" class="btn btn-outline-primary btn-sm">確認</button>
+</form>
+<script>
+document.getElementById("submit").addEventListener("click", function() {
+var money = String(document.getElementById("val").value).concat('000000000000000000');
+    contract.methods.swear(document.getElementById("credit").value, money).send({from:document.getElementById("wallet").value });
+});
+</script>
+{% endblock %}

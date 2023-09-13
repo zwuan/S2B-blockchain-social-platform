@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block scripts %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg {
+  background-image: url("https://www.un.org/en/conf/ocean/assets/img/featured-image-index.jpg");
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+}
+</style>
+{% endblock scripts %}
+{% block content %}
+<div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+  <div class="w3-display-middle">
+    <h1 class="w3-jumbo w3-animate-top w3-center">SwearToBlock</h1>
+    <p class="w3-large w3-center">SwearToBlock is an open source swearing blockchain platform.</p>
+  </div>
+</div>
+{% endblock %}
